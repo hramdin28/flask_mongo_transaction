@@ -1,0 +1,74 @@
+version: '3.7'
+services:
+  mongo-replica-setup:
+    container_name: mongo-setup
+    image: 'mongo:latest'
+    volumes:
+      - ./scripts/mongosetup.sh:/scripts/mongosetup.sh
+    entrypoint: [ "bash", "/scripts/mongosetup.sh" ]
+    env_file:
+      - .env
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+    depends_on:
+      - mongo1
+      - mongo2
+      - mongo3
+
+  mongo1:
+    image: mongo:latest
+    container_name: mongo1
+    command: [ "--keyFile", "/auth/file.key", "--replSet", "my-replica-set", "--bind_ip_all", "--port", "27017" ]
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE}
+    ports:
+      - "27017:27017"
+    volumes:
+      - dataMongo1:/Users/hanishramdin/data/db_1
+      - ./file.key:/auth/file.key
+    env_file:
+      - .env
+    healthcheck:
+      test: test $$(echo "rs.status().ok" | mongo -u $${MONGO_INITDB_ROOT_USERNAME} -p $${MONGO_INITDB_ROOT_PASSWORD} --quiet) -eq 1
+      interval: 10s
+      start_period: 30s
+
+  mongo2:
+    image: mongo:latest
+    container_name: mongo2
+    command: [ "--keyFile", "/auth/file.key", "--replSet", "my-replica-set", "--bind_ip_all", "--port", "27018" ]
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE}
+    env_file:
+      - .env
+    volumes:
+      - dataMongo2:/Users/hanishramdin/data/db_2
+      - ./file.key:/auth/file.key
+    ports:
+      - "27018:27018"
+
+  mongo3:
+    image: mongo:latest
+    container_name: mongo3
+    command: [ "--keyFile", "/auth/file.key", "--replSet", "my-replica-set", "--bind_ip_all", "--port", "27019" ]
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE}
+    env_file:
+      - .env
+    volumes:
+      - dataMongo3:/Users/hanishramdin/data/db_3
+      - ./file.key:/auth/file.key
+    ports:
+      - "27019:27019"
+
+volumes:
+  dataMongo1:
+  dataMongo2:
+  dataMongo3:
