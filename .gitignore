@@ -1,3 +1,5 @@
 *.log
 *.idea/**
 *.pb
+*.pb
+.idea/sonarlint/issuestore/index.pb
