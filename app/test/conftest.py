@@ -10,8 +10,14 @@ def app():
     yield app
 
 
+@pytest.fixture()
+def client(app):
+    return app.test_client()
+
+
 @pytest.fixture(scope="function")
 def mongo_db():
+    disconnect()
     connection = connect(db='mongotest', host='mongomock://localhost')
     yield connection
     disconnect()

@@ -1,9 +1,10 @@
 define USAGE
 Commands:
-	init      Install Python dev dependencies
-	init-prod      Install Python prod-only dependencies
-	test      Run linters, test db migrations and tests.
-	mongodb   launch a docker-compose to launch a 3 nodes mongo cluster
+	init		Install Python dev dependencies
+	init-prod	Install Python prod-only dependencies
+	test		Run test and generate html coverage
+	test-xml	Run test and generate xml coverage
+	mongo		Launch a 3 node mongo cluster with replicaset
 endef
 
 export USAGE
@@ -18,4 +19,10 @@ init_prod:
 	pip install -r resources/requirements/common.txt
 
 test:
+	pytest --cov-report html:coverage/ --cov=.
+
+test-xml:
 	pytest -v -o junit_family=xunit1 --cov=. --cov-report xml:coverage.xml --junitxml=nosetests.xml
+
+mongo:
+	docker-compose -f resources/docker/docker-compose.yml up -d
