@@ -8,7 +8,7 @@ from config import config_by_profile
 db = MongoEngine()
 
 
-def create_app(profile):
+def create_app(profile: str):
     print(f"Profile: {profile}")
     app = Flask(__name__)
     app.config.from_object(config_by_profile[profile])
