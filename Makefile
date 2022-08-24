@@ -20,6 +20,7 @@ init_prod:
 	pip install -r resources/requirements/common.txt
 
 test:
+	mkdir -p coverage
 	pytest --cov-report html:coverage/ --cov=.
 
 test-xml:
