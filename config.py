@@ -7,6 +7,8 @@ class Config:
     SECRET_KEY = os.getenv('SECRET_KEY', os.urandom(32))
     DEBUG = False
     TESTING = False
+    APP_PORT = 5000
+    APP_HOST = '127.0.0.1'
 
 
 class DevelopmentConfig(Config):
@@ -47,13 +49,34 @@ class TestingConfig(Config):
 
 class ProductionConfig(Config):
     DEBUG = False
-    MONGODB_SETTINGS = {
-        'db': 'test_db',
-        'host': 'localhost',
-        'port': 27017,
-        'username': 'root',
-        'password': 'rootpassword'
-    }
+    APP_PORT = 8081
+    APP_HOST = '0.0.0.0'
+    MONGODB_SETTINGS = [
+        {
+            'alias': 'default',
+            'db': 'test_db',
+            'host': 'mongo1',
+            'port': 27017,
+            'username': 'root',
+            'password': 'rootpassword'
+        },
+        {
+            'alias': 'mongo2',
+            'db': 'test_db',
+            'host': 'mongo2',
+            'port': 27018,
+            'username': 'root',
+            'password': 'rootpassword'
+        },
+        {
+            'alias': 'mongo3',
+            'db': 'test_db',
+            'host': 'mongo1',
+            'port': 27019,
+            'username': 'root',
+            'password': 'rootpassword'
+        }
+    ]
 
 
 config_by_profile = dict(
